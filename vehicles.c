@@ -3,7 +3,7 @@
 #include <string.h>
 
 
-int array_size = 20;
+int array_size = 10;
 
 typedef struct vehicle { //Definição do modelo de dados para cada instância de um veículo
     char brand[20];
@@ -20,7 +20,7 @@ void title_printer() {
     printf("(1) Listar veículos cadastrados\n");
     printf("(2) Inserir um novo veículo\n");
     printf("(3) Listar os veículos filtrando-se por ano de fabricação\n");
-    printf("(4) Listar por ano de fabricação específico\n");
+    printf("(4) Listar veículos fabricado após o ano especificado\n");
     printf("(5) Listrar os veículos filtrando-se pelo modelo\n");
     puts("Digite qualquer letra para sair");
 };
@@ -59,7 +59,7 @@ int main() {
     int newYearOfFabrication;
     int chosenYearOfFabrication;
     int choice = 1;
-    int register_counter = 5;
+    int register_counter = 3;
     int sumExistChecker = 0;
     int existChecker[20];
     char newBrand[20];
@@ -73,8 +73,6 @@ int main() {
     car[1] = model_instanciator("Honda", "Civic", "EVF-3581", 2014);
     car[2] = model_instanciator("Volkswagen", "Golf", "EGQ-1234", 2014);
     car[3] = model_instanciator("Chevrolet", "Tracker", "DZA-7533", 2007);
-    car[4] = model_instanciator("Ford", "Mustang", "SEX-6666", 2019);
-    car[5] = model_instanciator("Hyundai", "HB20", "EAF-1297", 2017);
 
     while (choice > 0 && choice <= 5) {
         // Importante frisar que o caminho mais correto seria utilizar o método fgets() e sem utilizar fflush(), visto que pode ser considerado um UNDEFINED BEHAVIOUR.
@@ -119,12 +117,8 @@ int main() {
                 printf("\nVocê registrou:\n");
                 model_printer(car[register_counter]); printf("\n");
 
-                break;
-
-            case 3: //Listagem de veículo por ordem crescente de ano de fabricação
-                //Técnica de BubbleSort
                 printf("\n------------------------------\n");
-                puts("Listando de acordo com o ano de fabricação");
+                puts("Ordenando veículos de acordo com o ano de fabricação");
                 for (i = 0; i <= register_counter; ++i) {
                     for (j = i + 1; j <= register_counter; ++j) {
                         if (car[i].year_of_fabrication > car[j].year_of_fabrication) {
@@ -135,15 +129,11 @@ int main() {
                         }
                     }
                 }
-                
-                for (i = 0; i <= register_counter; i++) {
-                    model_printer(car[i]); 
-                    printf("\n");   
-                }
+                puts("Veículos ordenados.");
 
                 break;
-
-            case 4: //Lista apenas veículos com o ano de fabricação especificado
+                
+            case 3: //Lista apenas veículos com o ano de fabricação especificado
                 printf("\n------------------------------\n");
                 printf("Deseja visualizar veículos fabricados em qual ano? ");
                 scanf("%d", &chosenYearOfFabrication);
@@ -175,6 +165,41 @@ int main() {
                 }
 
                 break;
+
+            case 4: //Listagem de veículo fabricados acima de ano de fabricação especificado pelo usuário.
+                
+                printf("\n------------------------------\n");
+                printf("Deseja visualizar veículos fabricados acima de qual ano? ");
+                scanf("%d", &chosenYearOfFabrication);
+                printf("\n------------------------------\n");
+                
+                sumExistChecker = 0;
+
+                for (i = 0; i <= register_counter; i++) {
+                    if (car[i].year_of_fabrication >= chosenYearOfFabrication) {
+                        existChecker[i] = 1;
+                    }
+                    else {
+                        existChecker[i] = 0;
+                    }
+                    sumExistChecker = sumExistChecker + existChecker[i];
+                }
+
+                if (sumExistChecker == 0) {
+                    printf("\nNão há veículos de %d registrados em nosso sistema", chosenYearOfFabrication);
+                }
+
+                else {
+                    printf("Listando veículos fabricados em %d", chosenYearOfFabrication);
+                    for (i = 0; i <= register_counter; i++) {
+                        if (existChecker[i] == 1) {
+                            model_printer(car[i]);
+                        }
+                    }
+                }
+
+                break;
+
 
             case 5: //Listando apenas veículos de acordo com o modelo
                 printf("\nDigite o modelo do veículo que deseja buscar exatamente do jeito que foi registrado: ");
